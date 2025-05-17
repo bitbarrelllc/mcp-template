@@ -1,9 +1,9 @@
 from ..servers import v1_mcp
-from .config import ServerSettings, EnvironmentSettings
+from .config import ServerSettings
 from .enums import EnvironmentOption, ServerTransportOptions
 
 class MCPServer:
-    def __init__(self, settings: ServerSettings | EnvironmentSettings, **kwargs):
+    def __init__(self, settings: ServerSettings, **kwargs):
         self.settings = settings
         self.kwargs = kwargs
 
@@ -17,8 +17,8 @@ class MCPServer:
 
         if isinstance(self.settings, ServerSettings):
             to_update = {
-                "name": self.settings.SERVER_NAME,
-                "instructions": self.settings.SERVER_INSTRUCTIONS
+                "name": self.settings.server.name,
+                "instructions": self.settings.server.instructions
             }
             self.kwargs.update(to_update)
 
@@ -32,10 +32,10 @@ class MCPServer:
         """
         Start the MCP server.
         """
-        if isinstance(self.settings, EnvironmentSettings):
-            if self.settings.ENVIRONMENT == EnvironmentOption.PRODUCTION:
+        if isinstance(self.settings, ServerSettings):
+            if self.settings.environment == EnvironmentOption.PRODUCTION:
                 transport = ServerTransportOptions.STREAMABLE_HTTP.value
             else:
-                transport = self.settings.SERVER_TRANSPORT.value
+                transport = self.settings.server.transport.value
             # Use serve() in async contexts
             await self.mcp_server.run_async(transport=transport)

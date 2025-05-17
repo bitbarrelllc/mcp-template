@@ -1,29 +1,20 @@
-import os
-from enum import Enum
-
-from pydantic_settings import BaseSettings
-from starlette.config import Config
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel, Field
 
 from .enums import EnvironmentOption, ServerTransportOptions
 
-config = Config(".env")
+class Server(BaseModel):
+    name: str = Field(default="MCP Server")
+    instructions: str = Field(default="MCP Server Project Template")
+    transport: ServerTransportOptions = Field(default=ServerTransportOptions.STDIO)
 
 
 class ServerSettings(BaseSettings):
-    SERVER_NAME: str = config("SERVER_NAME", default="MCP Server")
-    SERVER_INSTRUCTIONS: str | None = config("SERVER_INSTRUCTIONS", default="MCP Server Project Template")
-    SERVER_TRANSPORT: ServerTransportOptions | None = config("SERVER_TRANSPORT", default=ServerTransportOptions.STDIO.value)
+    server: Server = Server()
+    environment: EnvironmentOption = Field(default=EnvironmentOption.LOCAL)
 
 
-class EnvironmentSettings(BaseSettings):
-    ENVIRONMENT: EnvironmentOption = config("ENVIRONMENT", default=EnvironmentOption.LOCAL)
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', env_nested_delimiter='__')
 
 
-class Settings(
-    ServerSettings,
-    EnvironmentSettings,
-):
-    pass
-
-
-settings = Settings()
+settings = ServerSettings()

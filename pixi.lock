@@ -446,12 +446,13 @@ packages:
 - pypi: .
   name: mcp-project
   version: 0.1.0
-  sha256: 9820497b645eecb1feb1ac16215063de0134b447b3ed5f45c64ef30cb999a9dc
+  sha256: e74708d1de2f976b3c28150fdb5cd61ad2f1044640244625387ca67904a7fdbd
   requires_dist:
   - uvicorn>=0.21.0
   - pydantic>=2.0.0
   - python-dotenv>=1.0.0
   - fastmcp>=2.3.4
+  - pydantic-settings>=2.9.1,<3
   - pytest>=7.0.0 ; extra == 'dev'
   - black>=23.0.0 ; extra == 'dev'
   - isort>=5.12.0 ; extra == 'dev'
