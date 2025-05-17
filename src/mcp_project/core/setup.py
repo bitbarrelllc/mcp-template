@@ -1,13 +1,10 @@
-from ..servers import v1_mcp
+from .server import MCPServer
+from .config import ServerSettings, EnvironmentSettings
 
 
-def create_mcp_server(**kwargs):
+def create_mcp_server(settings: ServerSettings | EnvironmentSettings, **kwargs) -> MCPServer:
     """
     Create and configure the MCP server.
     """
-    from fastmcp import FastMCP
-
-    mcp_server = FastMCP(**kwargs)
-    mcp_server.mount("v1", v1_mcp)
-
+    mcp_server = MCPServer(settings, **kwargs)
     return mcp_server
