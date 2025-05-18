@@ -138,7 +138,7 @@ class MCPServer:
         """
         if isinstance(self.settings, Settings):
             if self.settings.environment == EnvironmentOption.PRODUCTION:
-                transport = ServerTransportOptions.STREAMABLE_HTTP.value
+                transport = ServerTransportOptions.STREAMHTTP.value
             else:
                 transport = self.settings.server.transport.value
             # Use serve() in async contexts
