@@ -1,8 +1,8 @@
 from .server import MCPServer
-from .config import ServerSettings
+from .config import Settings
 
 
-def create_mcp_server(settings: ServerSettings, **kwargs) -> MCPServer:
+def create_mcp_server(settings: Settings, **kwargs) -> MCPServer:
     """
     Create and configure the MCP server.
     """
