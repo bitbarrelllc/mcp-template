@@ -18,21 +18,13 @@ class MCPServer:
     def __init__(self, settings: Settings, **kwargs):
         self.settings = settings
         self.kwargs = kwargs
+        self._oauth_provider = None
+        self._auth_settings = None
 
-        self.mcp_server = self._create_mcp_server()
-
+        # Initialize the OAuth provider
         if self.settings.environment == EnvironmentOption.PRODUCTION:
-            # Add the callback route for GitHub OAuth
-            self.__add_callback_route()
-            self.__add_user_info_tool()
-    
-    @property
-    def _auth_settings(self):
-        """
-        Create and configure the authentication settings.
-        """
-        if isinstance(self.settings, Settings):
-            auth_settings = AuthSettings(
+            self._oauth_provider = GitHubOAuthProvider(self.settings)
+            self._auth_settings = AuthSettings(
                 issuer_url=self.settings.server.url,
                 client_registration_options=ClientRegistrationOptions(
                     enabled=True,
@@ -41,13 +33,14 @@ class MCPServer:
                 ),
                 required_scopes=[self.settings.server.scope],
             )
-            return auth_settings
-        return None
 
-    @property
-    def _oauth_provider(self):
-        # TODO: Make this a generic OAuth provider
-        return GitHubOAuthProvider(self.settings)
+        self.mcp_server = self._create_mcp_server()
+
+        if self.settings.environment == EnvironmentOption.PRODUCTION:
+            # Add the callback route for GitHub OAuth
+            self.__add_callback_route()
+            self.__add_user_info_tool()
+
     
     def __add_user_info_tool(self):
         """
@@ -123,8 +116,8 @@ class MCPServer:
             if self.settings.environment == EnvironmentOption.PRODUCTION:
                 # Enforce Auth Middleware in PRODUCTION
                 self.kwargs.update({
-                    "auth_settings": self._auth_settings,
-                    "oauth_provider": self._oauth_provider,
+                    "auth": self._auth_settings,
+                    "auth_server_provider": self._oauth_provider,
                 })
 
         mcp_server = FastMCP(**self.kwargs)
